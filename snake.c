@@ -44,10 +44,15 @@ void move_snake() {
     snake[0].x += dir_x;
     snake[0].y += dir_y;
 
-    if (snake[0].x < 0 || snake[0].x >= (WINDOW_WIDTH / GRID_SIZE) ||
-        snake[0].y < 0 || snake[0].y >= (WINDOW_HEIGHT / GRID_SIZE)) {
-        running = 0;
-    }
+    int max_x = WINDOW_WIDTH / GRID_SIZE;
+    int max_y = WINDOW_HEIGHT / GRID_SIZE;
+
+    // "owijanie" pozycji węża, zamiast kończenia gry
+    if (snake[0].x < 0) snake[0].x = max_x - 1;
+    else if (snake[0].x >= max_x) snake[0].x = 0;
+
+    if (snake[0].y < 0) snake[0].y = max_y - 1;
+    else if (snake[0].y >= max_y) snake[0].y = 0;
 }
 
 void render_snake() {
