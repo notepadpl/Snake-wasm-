@@ -6,6 +6,8 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define GRID_SIZE 20
+SDL_Window *window = NULL;
+SDL_Renderer *renderer = NULL;
 bool init() {
      if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         return false;
