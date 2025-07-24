@@ -6,6 +6,18 @@
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define GRID_SIZE 20
+bool init() {
+     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        return false;
+    }
+
+    SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
+    if (window == NULL | renderer == NULL) {
+        return false;
+    } 
+
+    return true;
+}
 
 int running = 1;
 SDL_Window* window = NULL;
@@ -87,11 +99,7 @@ void loop() {
 
 
 int main() {
-    SDL_Init(SDL_INIT_VIDEO);
-    window = SDL_CreateWindow("Snake", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                              WINDOW_WIDTH, WINDOW_HEIGHT, 0);
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
+    init();
     for (int i = 0; i < snake_length; ++i) {
         snake[i].x = 5 - i;
         snake[i].y = 5;
