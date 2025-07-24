@@ -1,6 +1,7 @@
-#include <SDL.h>
-#include <stdlib.h>
-#include <time.h>
+#include <stdbool.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
+#include <emscripten.h>
 
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
@@ -83,15 +84,9 @@ int main() {
         snake[i].y = 5;
     }
 
-#ifdef __EMSCRIPTEN__
-    #include <emscripten.h>
+
     emscripten_set_main_loop(loop, -1, 1);
-#else
-    while (running) {
-        loop();
-        SDL_Delay(100);
-    }
-#endif
+
 
     quit();
     return 0;
