@@ -55,6 +55,8 @@ void render_snake() {
     SDL_RenderPresent(renderer);
 }
 
+int frame_counter = 0;
+
 void loop() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
@@ -69,14 +71,19 @@ void loop() {
         }
     }
 
-    move_snake();
+    if (++frame_counter >= 10) {
+        move_snake();
+        frame_counter = 0;
+    }
+
     render_snake();
 
     if (!running) {
-        emscripten_cancel_main_loop(); // zatrzymuje pętlę
+        emscripten_cancel_main_loop();
         quit();
     }
 }
+
 
 
 int main() {
