@@ -85,7 +85,7 @@ int main() {
 
 #ifdef __EMSCRIPTEN__
     #include <emscripten.h>
-    emscripten_set_main_loop(loop, 10, 1);
+    emscripten_set_main_loop(loop, -1, 1);
 #else
     while (running) {
         loop();
