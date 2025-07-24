@@ -71,7 +71,13 @@ void loop() {
 
     move_snake();
     render_snake();
+
+    if (!running) {
+        emscripten_cancel_main_loop(); // zatrzymuje pętlę
+        quit();
+    }
 }
+
 
 int main() {
     SDL_Init(SDL_INIT_VIDEO);
@@ -88,6 +94,6 @@ int main() {
     emscripten_set_main_loop(loop, -1, 1);
 
 
-    quit();
+
     return 0;
 }
