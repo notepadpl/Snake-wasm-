@@ -22,8 +22,6 @@ bool init() {
 }
 
 int running = 1;
-SDL_Window* window = NULL;
-SDL_Renderer* renderer = NULL;
 
 typedef struct {
     int x, y;
