@@ -4,18 +4,22 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <time.h>
-SDL_Rect dpad_up = {DPAD_PADDING + DPAD_SIZE, WINDOW_HEIGHT - 3 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
-SDL_Rect dpad_down = {DPAD_PADDING + DPAD_SIZE, WINDOW_HEIGHT - DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
-SDL_Rect dpad_left = {DPAD_PADDING, WINDOW_HEIGHT - 2 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
-SDL_Rect dpad_right = {DPAD_PADDING + 2 * DPAD_SIZE, WINDOW_HEIGHT - 2 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
-
+#define DPAD_SIZE 50
+#define DPAD_PADDING 20
 #define WINDOW_WIDTH 640
 #define WINDOW_HEIGHT 480
 #define GRID_SIZE 20
+SDL_Rect dpad_up, dpad_down, dpad_left, dpad_right;
+
 
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-
+void setup_dpad() {
+    dpad_up = (SDL_Rect){DPAD_PADDING + DPAD_SIZE, WINDOW_HEIGHT - 3 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
+    dpad_down = (SDL_Rect){DPAD_PADDING + DPAD_SIZE, WINDOW_HEIGHT - DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
+    dpad_left = (SDL_Rect){DPAD_PADDING, WINDOW_HEIGHT - 2 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
+    dpad_right = (SDL_Rect){DPAD_PADDING + 2 * DPAD_SIZE, WINDOW_HEIGHT - 2 * DPAD_SIZE - DPAD_PADDING, DPAD_SIZE, DPAD_SIZE};
+}
 bool init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
 
@@ -87,7 +91,13 @@ void move_snake() {
         spawn_food();
     }
 }
-
+void render_dpad() {
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderFillRect(renderer, &dpad_up);
+    SDL_RenderFillRect(renderer, &dpad_down);
+    SDL_RenderFillRect(renderer, &dpad_left);
+    SDL_RenderFillRect(renderer, &dpad_right);
+}
 void render_snake() {
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
     for (int i = 0; i < snake_length; ++i) {
@@ -124,6 +134,20 @@ void loop() {
                 case SDLK_RIGHT: if (dir_x != -1) { dir_x = 1; dir_y = 0; } break;
             }
         }
+            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+    int x = e.button.x;
+    int y = e.button.y;
+
+    if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_up)) {
+        if (dir_y != 1) { dir_x = 0; dir_y = -1; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_down)) {
+        if (dir_y != -1) { dir_x = 0; dir_y = 1; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_left)) {
+        if (dir_x != 1) { dir_x = -1; dir_y = 0; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_right)) {
+        if (dir_x != -1) { dir_x = 1; dir_y = 0; }
+    }
+}
     }
 
     if (++frame_counter >= 10) {
@@ -136,7 +160,7 @@ void loop() {
 
     render_snake();
     render_food();
-
+render_dpad();
     SDL_RenderPresent(renderer);
 
     if (!running) {
@@ -152,7 +176,7 @@ int main() {
         snake[i].x = 5 - i;
         snake[i].y = 5;
     }
-
+setup_dpad();
     spawn_food();
 
     emscripten_set_main_loop(loop, -1, 1);
