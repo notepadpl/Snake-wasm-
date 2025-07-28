@@ -3,7 +3,12 @@ name: Compile C++ to WebAssembly and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Zmień na nazwę głównej gałęzi, jeśli inna
+      - main  # Zmień na swoją główną gałąź, np. master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   build-and-deploy:
@@ -12,18 +17,29 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
-      - name: Install Emscripten
+      - name: Cache Emscripten SDK
+        uses: actions/cache@v4
+        with:
+          path: emsdk
+          key: emsdk-${{ runner.os }}-v1
+
+      - name: Cache Emscripten build cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.emscripten_cache
+          key: emscripten-cache-${{ runner.os }}-v1
+
+      - name: Install Emscripten and compile
         run: |
-          git clone https://github.com/emscripten-core/emsdk.git
+          git clone https://github.com/emscripten-core/emsdk.git || true
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-        shell: bash
-
-      - name: Compile C++ to WebAssembly
-        run: |
-          source emsdk/emsdk_env.sh
+          source ./emsdk_env.sh
+          cd ..
           mkdir -p dist
           emcc snakeT.c \
             -s WASM=1 \
