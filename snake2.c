@@ -77,6 +77,13 @@ void move_snake() {
 
     int max_x = WINDOW_WIDTH / GRID_SIZE;
     int max_y = WINDOW_HEIGHT / GRID_SIZE;
+// kolizja z samym sobą
+for (int i = 1; i < snake_length; ++i) {
+    if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+        running = 0;
+        return;
+    }
+}
 
     // wrap-around
     if (snake[0].x < 0) snake[0].x = max_x - 1;
