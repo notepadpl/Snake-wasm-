@@ -41,7 +41,7 @@ jobs:
           source ./emsdk_env.sh
           cd ..
           mkdir -p dist
-          emcc snake2.c \
+          emcc snakeT.c \
             -s WASM=1 \
             -s USE_SDL=2 \
             -s USE_SDL_IMAGE=2 \
