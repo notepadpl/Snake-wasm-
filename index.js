@@ -27,7 +27,7 @@ var ENVIRONMENT_IS_SHELL = !ENVIRONMENT_IS_WEB && !ENVIRONMENT_IS_NODE && !ENVIR
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmpgapapfy2.js
+// include: /tmp/tmpoeec3ou6.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -204,25 +204,25 @@ Module['FS_createPath']("/", "assets", true, true);
     }
 
     }
-    loadPackage({"files": [{"filename": "/assets/fast99.ttf", "start": 0, "end": 10768}], "remote_package_size": 10768});
+    loadPackage({"files": [{"filename": "/assets/Tmp", "start": 0, "end": 7}, {"filename": "/assets/apple_green.png", "start": 7, "end": 34335}, {"filename": "/assets/fast99.ttf", "start": 34335, "end": 45103}, {"filename": "/assets/snake_yellow_blob.png", "start": 45103, "end": 50275}, {"filename": "/assets/snake_yellow_head.png", "start": 50275, "end": 78451}], "remote_package_size": 78451});
 
   })();
 
-// end include: /tmp/tmpgapapfy2.js
-// include: /tmp/tmpt4la4krc.js
+// end include: /tmp/tmpoeec3ou6.js
+// include: /tmp/tmp1bppz2s7.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if ((typeof ENVIRONMENT_IS_WASM_WORKER != 'undefined' && ENVIRONMENT_IS_WASM_WORKER) || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD) || (typeof ENVIRONMENT_IS_AUDIO_WORKLET != 'undefined' && ENVIRONMENT_IS_AUDIO_WORKLET)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpt4la4krc.js
-// include: /tmp/tmpc3ppk2n9.js
+  // end include: /tmp/tmp1bppz2s7.js
+// include: /tmp/tmpwm68gscv.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmpc3ppk2n9.js
+  // end include: /tmp/tmpwm68gscv.js
 
 
 var arguments_ = [];
