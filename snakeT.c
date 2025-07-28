@@ -237,14 +237,19 @@ void loop() {
             if (SDL_PointInRect(&p, &dpad_right)) if (dir_x != -1) { dir_x = 1; dir_y = 0; }
         }
     }
-
+int game_over_counter=0;
     if (!running) {
-        SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-        SDL_RenderClear(renderer);
-        render_game_over();
-        SDL_RenderPresent(renderer);
-        return;
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    render_game_over();
+    SDL_RenderPresent(renderer);
+
+    if (++game_over_counter >= 120) { // 2 sekundy przy 60 FPS
+        emscripten_cancel_main_loop();
     }
+    return;
+}
+
 
     if (++frame_counter >= 10) {
         move_snake();
