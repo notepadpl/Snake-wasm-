@@ -124,13 +124,27 @@ void render_score() {
     if (!surface) return;
 
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-    SDL_FreeSurface(surface);
-    if (!texture) return;
+    if (!texture) {
+        SDL_FreeSurface(surface);
+        return;
+    }
 
-    SDL_Rect dst = {300, 10, surface->w, surface->h};
+    // Pozycjonowanie wyniku NAD padem
+    int base_x = GAME_WIDTH + DPAD_PADDING;
+    int base_y = WINDOW_HEIGHT - 3 * DPAD_SIZE - DPAD_PADDING;
+
+    SDL_Rect dst = {
+        base_x + DPAD_SIZE,     // środek w poziomie
+        base_y - surface->h - 200, // 10px nad górną krawędzią pada
+        surface->w,
+        surface->h
+    };
+
     SDL_RenderCopy(renderer, texture, NULL, &dst);
     SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
 }
+
 void render_food() {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_Rect r = {
