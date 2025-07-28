@@ -4,7 +4,7 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <time.h>
-
+#include <SDL2/SDL_ttf.h>
 #define GRID_SIZE 20
 #define DPAD_SIZE 50
 #define DPAD_PADDING 20
@@ -14,7 +14,8 @@
 
 #define WINDOW_WIDTH (GAME_WIDTH + 3 * DPAD_SIZE + 2 * DPAD_PADDING)
 #define WINDOW_HEIGHT GAME_HEIGHT
-
+int score = 0;
+TTF_Font* font = NULL;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
 
@@ -49,6 +50,9 @@ bool init() {
     if (!window || !renderer) return false;
 
     srand(time(NULL));
+    if (TTF_Init() < 0) return false;
+font = TTF_OpenFont("assets/fast99.ttf", 24); // pamiętaj dodać font.ttf do projektu
+if (!font) return false;
     return true;
 }
 
@@ -96,6 +100,7 @@ for (int i = 1; i < snake_length; ++i) {
     if (snake[0].x == food.x && snake[0].y == food.y) {
         if (snake_length < 100) snake_length++;
         spawn_food();
+        score++;
     }
 }
 
@@ -110,7 +115,22 @@ void render_snake() {
         SDL_RenderFillRect(renderer, &r);
     }
 }
+void render_score() {
+    SDL_Color white = {255, 255, 255, 255};
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "Score: %d", score);
 
+    SDL_Surface* surface = TTF_RenderText_Solid(font, buffer, white);
+    if (!surface) return;
+
+    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
+    SDL_FreeSurface(surface);
+    if (!texture) return;
+
+    SDL_Rect dst = {300, 10, surface->w, surface->h};
+    SDL_RenderCopy(renderer, texture, NULL, &dst);
+    SDL_DestroyTexture(texture);
+}
 void render_food() {
     SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
     SDL_Rect r = {
@@ -133,6 +153,8 @@ void quit() {
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
     SDL_Quit();
+    if (font) TTF_CloseFont(font);
+TTF_Quit();
 }
 
 void loop() {
@@ -168,6 +190,7 @@ void loop() {
 
     render_snake();
     render_food();
+    render_score();
     render_dpad();
 
     SDL_RenderPresent(renderer);
