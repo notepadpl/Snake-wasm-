@@ -3,12 +3,7 @@ name: Compile C++ to WebAssembly and Deploy to GitHub Pages
 on:
   push:
     branches:
-      - main  # Zmień na swoją główną gałąź, np. master
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+      - main  # Zmień na nazwę głównej gałęzi, jeśli inna
 
 jobs:
   build-and-deploy:
@@ -17,29 +12,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          persist-credentials: false
 
-      - name: Cache Emscripten SDK
-        uses: actions/cache@v4
-        with:
-          path: emsdk
-          key: emsdk-${{ runner.os }}-v1
-
-      - name: Cache Emscripten build cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.emscripten_cache
-          key: emscripten-cache-${{ runner.os }}-v1
-
-      - name: Install Emscripten and compile
+      - name: Install Emscripten
         run: |
-          git clone https://github.com/emscripten-core/emsdk.git || true
+          git clone https://github.com/emscripten-core/emsdk.git
           cd emsdk
           ./emsdk install latest
           ./emsdk activate latest
-          source ./emsdk_env.sh
-          cd ..
+        shell: bash
+
+      - name: Compile C++ to WebAssembly
+        run: |
+          source emsdk/emsdk_env.sh
           mkdir -p dist
           emcc snakeT.c \
             -s WASM=1 \
@@ -50,7 +34,7 @@ jobs:
             -s USE_WEBGL2=1 \
             -s MAX_WEBGL_VERSION=2 \
             -s MIN_WEBGL_VERSION=2 \
-            --preload-file assets \
+            --preload-file assets/fast99.ttf \
             -o dist/index.html
         shell: bash
 
