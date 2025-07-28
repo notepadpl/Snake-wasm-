@@ -74,6 +74,44 @@ void spawn_food() {
         }
     }
 }
+void render_game_over() {
+    SDL_Color white = {255, 255, 255, 255};
+    SDL_Surface* surface1 = TTF_RenderText_Solid(font, "Game Over", white);
+    SDL_Surface* surface2 = NULL;
+
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "Score: %d", score);
+    surface2 = TTF_RenderText_Solid(font, buffer, white);
+
+    if (!surface1 || !surface2) return;
+
+    SDL_Texture* texture1 = SDL_CreateTextureFromSurface(renderer, surface1);
+    SDL_Texture* texture2 = SDL_CreateTextureFromSurface(renderer, surface2);
+
+    int center_x = WINDOW_WIDTH / 2;
+
+    SDL_Rect dst1 = {
+        center_x - surface1->w / 2,
+        WINDOW_HEIGHT / 2 - 50,
+        surface1->w,
+        surface1->h
+    };
+
+    SDL_Rect dst2 = {
+        center_x - surface2->w / 2,
+        WINDOW_HEIGHT / 2 + 10,
+        surface2->w,
+        surface2->h
+    };
+
+    SDL_RenderCopy(renderer, texture1, NULL, &dst1);
+    SDL_RenderCopy(renderer, texture2, NULL, &dst2);
+
+    SDL_DestroyTexture(texture1);
+    SDL_DestroyTexture(texture2);
+    SDL_FreeSurface(surface1);
+    SDL_FreeSurface(surface2);
+}
 
 void move_snake() {
     for (int i = snake_length - 1; i > 0; --i)
@@ -210,9 +248,17 @@ void loop() {
     SDL_RenderPresent(renderer);
 
     if (!running) {
-        emscripten_cancel_main_loop();
-        quit();
-    }
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    render_game_over();
+
+    SDL_RenderPresent(renderer);
+
+    // nie kończymy gry — po prostu pauzujemy (gra zatrzymana)
+    return;
+}
+
 }
 
 int main() {
