@@ -20,6 +20,8 @@ SDL_Window* window = NULL;
 SDL_Renderer* renderer = NULL;
 
 TTF_Font* font = NULL;
+SDL_Texture* snake_head_texture = NULL;
+SDL_Texture* snake_body_texture = NULL;
 SDL_Texture* snake_texture = NULL;
 SDL_Texture* food_texture = NULL;
 
@@ -55,15 +57,16 @@ bool init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
     if (TTF_Init() < 0) return false;
     if (IMG_Init(IMG_INIT_PNG) == 0) return false;
-
+snake_head_texture = load_texture("assets/snake_yellow_head.png");
+snake_body_texture = load_texture("assets/snake_yellow_blob.png");
     SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
     if (!window || !renderer) return false;
 
     font = TTF_OpenFont("assets/fast99.ttf", 24);
     if (!font) return false;
 
-    snake_texture = load_texture("assets/snake.png");
-    food_texture  = load_texture("assets/apple.png");
+    //snake_texture = load_texture("assets/snake.png");
+    food_texture  = load_texture("assets/apple_green.png");
     if (!snake_texture || !food_texture) return false;
 
     srand(time(NULL));
@@ -119,15 +122,19 @@ void move_snake() {
 
 void render_snake() {
     for (int i = 0; i < snake_length; ++i) {
-        SDL_Rect r = {
+        SDL_Rect dst = {
             snake[i].x * GRID_SIZE,
             snake[i].y * GRID_SIZE,
-            GRID_SIZE, GRID_SIZE
+            GRID_SIZE,
+            GRID_SIZE
         };
-        SDL_RenderCopy(renderer, snake_texture, NULL, &r);
+
+        if (i == 0)
+            SDL_RenderCopy(renderer, snake_head_texture, NULL, &dst);  // Głowa
+        else
+            SDL_RenderCopy(renderer, snake_body_texture, NULL, &dst);  // Ciało
     }
 }
-
 void render_food() {
     SDL_Rect r = {
         food.x * GRID_SIZE,
@@ -197,6 +204,9 @@ void render_dpad() {
 }
 
 void quit() {
+    if (snake_head_texture) SDL_DestroyTexture(snake_head_texture);
+if (snake_body_texture) SDL_DestroyTexture(snake_body_texture);
+    
     if (snake_texture) SDL_DestroyTexture(snake_texture);
     if (food_texture) SDL_DestroyTexture(food_texture);
     if (font) TTF_CloseFont(font);
