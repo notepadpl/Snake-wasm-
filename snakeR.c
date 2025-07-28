@@ -80,7 +80,13 @@ void move_snake() {
 
     int max_x = GAME_WIDTH / GRID_SIZE;
     int max_y = GAME_HEIGHT / GRID_SIZE;
-
+// kolizja z samym sobą
+for (int i = 1; i < snake_length; ++i) {
+    if (snake[0].x == snake[i].x && snake[0].y == snake[i].y) {
+        running = 0;
+        return;
+    }
+}
     if (snake[0].x < 0) snake[0].x = max_x - 1;
     else if (snake[0].x >= max_x) snake[0].x = 0;
 
