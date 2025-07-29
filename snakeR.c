@@ -210,7 +210,7 @@ TTF_Quit();
 }
 //int frame_counter = 0;
 
-void loop() {
+void loop2() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) running = 0;
@@ -257,7 +257,7 @@ render_dpad();
         quit();
     }
 }
-void loop2() {
+void loop() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) running = 0;
