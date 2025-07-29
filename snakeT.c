@@ -54,20 +54,23 @@ void setup_dpad() {
 }
 
 bool init() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
-    if (TTF_Init() < 0) return false;
-    if (IMG_Init(IMG_INIT_PNG) == 0) return false;
+if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
+if (TTF_Init() < 0) return false;
+if (IMG_Init(IMG_INIT_PNG) == 0) return false;
+
+SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
+if (!window || !renderer) return false;
+
+// Teraz renderer już istnieje, więc ładowanie tekstur zadziała!
 snake_head_texture = load_texture("assets/snake_yellow_head.png");
 snake_body_texture = load_texture("assets/snake_yellow_blob.png");
-    SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
-    if (!window || !renderer) return false;
 
-    font = TTF_OpenFont("assets/fast99.ttf", 24);
-    if (!font) return false;
+font = TTF_OpenFont("assets/fast99.ttf", 24);
+if (!font) return false;
 
-    //snake_texture = load_texture("assets/snake.png");
-    food_texture  = load_texture("assets/apple_green.png");
-    if (!snake_texture || !food_texture) return false;
+food_texture  = load_texture("assets/apple_green.png");
+if (!snake_head_texture || !snake_body_texture || !food_texture) return false;
+
 
     srand(time(NULL));
     return true;
