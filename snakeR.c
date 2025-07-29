@@ -213,54 +213,58 @@ void loop() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) running = 0;
-        else if (e.type == SDL_KEYDOWN) {
-            switch (e.key.keysym.sym) {
-                case SDLK_UP:    if (dir_y != 1)  { dir_x = 0; dir_y = -1; } break;
-                case SDLK_DOWN:  if (dir_y != -1) { dir_x = 0; dir_y = 1; }  break;
-                case SDLK_LEFT:  if (dir_x != 1)  { dir_x = -1; dir_y = 0; } break;
-                case SDLK_RIGHT: if (dir_x != -1) { dir_x = 1; dir_y = 0; }  break;
-            }
-        } else if (e.type == SDL_MOUSEBUTTONDOWN) {
-            int x = e.button.x;
-            int y = e.button.y;
-            SDL_Point p = {x, y};
+        // Obsługa wejścia (klawiatura/mysz) powinna być tylko, gdy gra działa
+        if (running) { // TYLKO gdy gra działa, reaguj na input gracza
+            if (e.type == SDL_KEYDOWN) {
+                switch (e.key.keysym.sym) {
+                    case SDLK_UP:    if (dir_y != 1)  { dir_x = 0; dir_y = -1; } break;
+                    case SDLK_DOWN:  if (dir_y != -1) { dir_x = 0; dir_y = 1; }  break;
+                    case SDLK_LEFT:  if (dir_x != 1)  { dir_x = -1; dir_y = 0; } break;
+                    case SDLK_RIGHT: if (dir_x != -1) { dir_x = 1; dir_y = 0; }  break;
+                }
+            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                int x = e.button.x;
+                int y = e.button.y;
+                SDL_Point p = {x, y};
 
-            if (SDL_PointInRect(&p, &dpad_up))    { if (dir_y != 1)  { dir_x = 0; dir_y = -1; } }
-            else if (SDL_PointInRect(&p, &dpad_down))  { if (dir_y != -1) { dir_x = 0; dir_y = 1; } }
-            else if (SDL_PointInRect(&p, &dpad_left))  { if (dir_x != 1)  { dir_x = -1; dir_y = 0; } }
-            else if (SDL_PointInRect(&p, &dpad_right)) { if (dir_x != -1) { dir_x = 1; dir_y = 0; } }
+                if (SDL_PointInRect(&p, &dpad_up))    { if (dir_y != 1)  { dir_x = 0; dir_y = -1; } }
+                else if (SDL_PointInRect(&p, &dpad_down))  { if (dir_y != -1) { dir_x = 0; dir_y = 1; } }
+                else if (SDL_PointInRect(&p, &dpad_left))  { if (dir_x != 1)  { dir_x = -1; dir_y = 0; } }
+                else if (SDL_PointInRect(&p, &dpad_right)) { if (dir_x != -1) { dir_x = 1; dir_y = 0; } }
+            }
         }
     }
 
-    if (++frame_counter >= 10) {
-        move_snake();
-        frame_counter = 0;
+    // Jeśli gra jeszcze działa, wykonaj logikę gry
+    if (running) {
+        if (++frame_counter >= 10) {
+            move_snake();
+            frame_counter = 0;
+        }
     }
 
+    // CZYSZCZENIE RENDERERA zawsze
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
 
-    render_snake();
-    render_food();
-    render_score();
-    render_dpad();
-
-    SDL_RenderPresent(renderer);
-
-     if (!running) {
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    render_game_over();
-    SDL_RenderPresent(renderer);
-
-    if (++game_over_counter >= 120) { // 2 sekundy przy 60 FPS
-        emscripten_cancel_main_loop();
+    // RENDEROWANIE
+    if (running) {
+        render_snake();
+        render_food();
+        render_score();
+        render_dpad();
+    } else { // Gra się zakończyła
+        render_game_over();
+        // Tutaj inkrementujemy licznik i sprawdzamy czas
+        // Jest to teraz poza blokiem renderującym, ale wciąż w funkcji loop()
+        if (++game_over_counter >= 120) { // 2 sekundy przy 60 FPS
+            emscripten_cancel_main_loop();
+        }
     }
-    return;
-}
 
+    // PREZENTACJA RENDERERA zawsze
+    SDL_RenderPresent(renderer);
 }
-
 int main() {
     if (!init()) return 1;
 
