@@ -18,7 +18,7 @@ int score = 0;
 TTF_Font* font = NULL;
 SDL_Window *window = NULL;
 SDL_Renderer *renderer = NULL;
-
+int game_over_counter=0;
 SDL_Rect dpad_up, dpad_down, dpad_left, dpad_right;
 
 typedef struct {
@@ -247,15 +247,15 @@ void loop() {
 
     SDL_RenderPresent(renderer);
 
-    if (!running) {
+     if (!running) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
-
     render_game_over();
-
     SDL_RenderPresent(renderer);
 
-    // nie kończymy gry — po prostu pauzujemy (gra zatrzymana)
+    if (++game_over_counter >= 120) { // 2 sekundy przy 60 FPS
+        emscripten_cancel_main_loop();
+    }
     return;
 }
 
