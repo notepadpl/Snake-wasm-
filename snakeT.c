@@ -54,27 +54,55 @@ void setup_dpad() {
 }
 
 bool init() {
-if (SDL_Init(SDL_INIT_VIDEO) < 0) return false;
-if (TTF_Init() < 0) return false;
-if (IMG_Init(IMG_INIT_PNG) == 0) return false;
+    if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+        printf("SDL_Init error: %s\n", SDL_GetError());
+        return false;
+    }
 
-SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer);
-if (!window || !renderer) return false;
+    if (TTF_Init() < 0) {
+        printf("TTF_Init error: %s\n", TTF_GetError());
+        return false;
+    }
 
-// Teraz renderer już istnieje, więc ładowanie tekstur zadziała!
-snake_head_texture = load_texture("assets/snake_yellow_head.png");
-snake_body_texture = load_texture("assets/snake_yellow_blob.png");
+    if (IMG_Init(IMG_INIT_PNG) == 0) {
+        printf("IMG_Init error: %s\n", IMG_GetError());
+        return false;
+    }
 
-font = TTF_OpenFont("assets/fast99.ttf", 24);
-if (!font) return false;
+    if (SDL_CreateWindowAndRenderer(WINDOW_WIDTH, WINDOW_HEIGHT, 0, &window, &renderer) < 0) {
+        printf("SDL_CreateWindowAndRenderer error: %s\n", SDL_GetError());
+        return false;
+    }
 
-food_texture  = load_texture("assets/apple_green.png");
-if (!snake_head_texture || !snake_body_texture || !food_texture) return false;
+    // Teraz można ładować tekstury
+    snake_head_texture = load_texture("assets/snake_yellow_head.png");
+    if (!snake_head_texture) {
+        printf("Nie udało się załadować snake_yellow_head.png\n");
+        return false;
+    }
 
+    snake_body_texture = load_texture("assets/snake_yellow_blob.png");
+    if (!snake_body_texture) {
+        printf("Nie udało się załadować snake_yellow_blob.png\n");
+        return false;
+    }
+
+    food_texture = load_texture("assets/apple_green.png");
+    if (!food_texture) {
+        printf("Nie udało się załadować apple_green.png\n");
+        return false;
+    }
+
+    font = TTF_OpenFont("assets/fast99.ttf", 24);
+    if (!font) {
+        printf("Nie udało się załadować czcionki: %s\n", TTF_GetError());
+        return false;
+    }
 
     srand(time(NULL));
     return true;
 }
+
 
 void spawn_food() {
     int max_x = GAME_WIDTH / GRID_SIZE;
