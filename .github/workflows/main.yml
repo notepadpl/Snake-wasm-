@@ -25,7 +25,7 @@ jobs:
         run: |
           source emsdk/emsdk_env.sh
           mkdir -p dist
-          emcc snakeT.c \
+          emcc snakeR.c \
             -s WASM=1 \
             -s USE_SDL=2 \
             -s USE_SDL_IMAGE=2 \
@@ -34,7 +34,7 @@ jobs:
             -s USE_WEBGL2=1 \
             -s MAX_WEBGL_VERSION=2 \
             -s MIN_WEBGL_VERSION=2 \
-            --preload-file assets \
+            --preload-file assets/fast99.ttf \
             -o dist/index.html
         shell: bash
 
