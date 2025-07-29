@@ -248,6 +248,7 @@ void loop() {
 
     render_snake();
     render_food();
+    render_score();
 render_dpad();
     SDL_RenderPresent(renderer);
 
