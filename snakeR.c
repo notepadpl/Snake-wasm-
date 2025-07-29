@@ -208,8 +208,55 @@ void quit() {
     if (font) TTF_CloseFont(font);
 TTF_Quit();
 }
+int frame_counter = 0;
 
 void loop() {
+    SDL_Event e;
+    while (SDL_PollEvent(&e)) {
+        if (e.type == SDL_QUIT) running = 0;
+        else if (e.type == SDL_KEYDOWN) {
+            switch (e.key.keysym.sym) {
+                case SDLK_UP: if (dir_y != 1) { dir_x = 0; dir_y = -1; } break;
+                case SDLK_DOWN: if (dir_y != -1) { dir_x = 0; dir_y = 1; } break;
+                case SDLK_LEFT: if (dir_x != 1) { dir_x = -1; dir_y = 0; } break;
+                case SDLK_RIGHT: if (dir_x != -1) { dir_x = 1; dir_y = 0; } break;
+            }
+        }
+            else if (e.type == SDL_MOUSEBUTTONDOWN) {
+    int x = e.button.x;
+    int y = e.button.y;
+
+    if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_up)) {
+        if (dir_y != 1) { dir_x = 0; dir_y = -1; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_down)) {
+        if (dir_y != -1) { dir_x = 0; dir_y = 1; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_left)) {
+        if (dir_x != 1) { dir_x = -1; dir_y = 0; }
+    } else if (SDL_PointInRect(&(SDL_Point){x, y}, &dpad_right)) {
+        if (dir_x != -1) { dir_x = 1; dir_y = 0; }
+    }
+}
+    }
+
+    if (++frame_counter >= 10) {
+        move_snake();
+        frame_counter = 0;
+    }
+
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+
+    render_snake();
+    render_food();
+render_dpad();
+    SDL_RenderPresent(renderer);
+
+    if (!running) {
+        emscripten_cancel_main_loop();
+        quit();
+    }
+}
+void loop2() {
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT) running = 0;
