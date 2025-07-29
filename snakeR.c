@@ -208,7 +208,7 @@ void quit() {
     if (font) TTF_CloseFont(font);
 TTF_Quit();
 }
-int frame_counter = 0;
+//int frame_counter = 0;
 
 void loop() {
     SDL_Event e;
