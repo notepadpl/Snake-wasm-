@@ -5,7 +5,7 @@
 #include <emscripten.h>
 #include <stdlib.h>
 #include <time.h>
-
+int game_over_counter=0;
 #define GRID_SIZE 20
 #define DPAD_SIZE 50
 #define DPAD_PADDING 20
@@ -237,7 +237,7 @@ void loop() {
             if (SDL_PointInRect(&p, &dpad_right)) if (dir_x != -1) { dir_x = 1; dir_y = 0; }
         }
     }
-int game_over_counter=0;
+
     if (!running) {
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
